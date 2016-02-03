@@ -1,0 +1,6 @@
+== README
+
+Urban Terror Arena - API in Ruby on Rails
+
+* Ruby version
+Ruby 2.1.5
