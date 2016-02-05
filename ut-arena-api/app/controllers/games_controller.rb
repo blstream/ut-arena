@@ -11,9 +11,17 @@ class GamesController < ApplicationController
   def create
     @game = Game.create(game_params)
     @game.save
-    redirect_to @game
   end
 
+  def update
+    @game = Game.find(params[:id])
+    @game.update(game_params)
+  end
+
+  def destroy
+    @game = Game.find(params[:id])
+    @game.destroy
+  end
 
   private
 
