@@ -1,24 +1,10 @@
 class GamesController < ApplicationController
   def index
-    games = Game.all
-    render json: games, status: 200
+    @games = Game.all
   end
 
   def show
-    game = Game.find(params[:id])
-    render json: game,
-      except: [:created_at, :updated_at],
-      include:
-        {
-          players:
-         {
-           only: [:nick, :id],
-           include: {
-             player_games:
-               { only: [:score, :team] }
-             }
-         }
-       },
-      status: 200
+    @game = Game.find(params[:id])
+    @players = @game.players
   end
 end
