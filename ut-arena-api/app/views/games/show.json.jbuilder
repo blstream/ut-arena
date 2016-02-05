@@ -7,7 +7,7 @@ json.game do
   json.players @game.players do |player|
     json.id player.id
     json.nick player.nick
-    json.score player.player_games.first.score
-    json.team player.player_games.first.team
+    json.score player.player_games.where(game_id: @game.id).first.score
+    json.team player.player_games.where(game_id: @game.id).first.team
   end
 end
