@@ -1,6 +1,17 @@
-class User < ActiveRecord::Base
-  validates :login, :email, presence: true
-  validates :email, email: true
-  has_secure_password
+require 'bcrypt'
 
+class User < ActiveRecord::Base
+	include BCrypt
+
+  	validates :login, :email, presence: true
+  	validates :email, email: true
+
+  	def password
+  		@password ||= Password.new(password_digest)
+  	end
+
+  	def password=(new_password)
+  		@password = Password.create(new_password)
+  		self.password_digest = @password
+  	end
 end
