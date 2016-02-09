@@ -3,8 +3,7 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
-  before_action :destroy_session
-  before_action :authenticate_user!
+  before_action :destroy_session, :authenticate_user!
 
   def destroy_session
     request.session_options[:skip] = true
@@ -15,8 +14,8 @@ class ApplicationController < ActionController::Base
 
     user_login = options.blank?? nil : options[:login]
     user = user_login && User.find_by(login: user_login)
-    puts user.authentication_token, user, token
     if user && ActiveSupport::SecurityUtils.secure_compare(user.authentication_token, token)
+      render json: { error: 463 }, status: 463 unless user.token_expires_at > Time.now
       @current_user = user
     else
       render json: {error: 401}, status:401

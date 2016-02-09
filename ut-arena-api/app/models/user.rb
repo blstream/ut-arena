@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
   	end
 
 		def generate_authentication_token
+		  self.token_expires_at = Time.now + 1.days
       loop do
         self.authentication_token = SecureRandom.base64(64)
         break unless User.find_by(authentication_token: authentication_token)
