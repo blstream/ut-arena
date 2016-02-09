@@ -5,6 +5,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :email
       t.string :password_digest
       t.string :authentication_token
+      t.timestamp :token_expires_at
       t.timestamps null: false
     end
   end
