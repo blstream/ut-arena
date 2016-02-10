@@ -30,12 +30,12 @@ class GamesController < ApplicationController
   def join
     player_game_params = {game_id: params[:id], player_id: params[:player_id]}
     if Game.find_by_id(params[:id]).is_finished?
-      render json: { error: "This game has already finished and cannot be joined" }, status: 400
-    elsif PlayerGame.find_by(player_game_params).nil?
-      @player_game = PlayerGame.create(player_game_params)
-    else
-      render json: { error: "This user has already joined that game" }, status: 409
+      return render json: { error: "This game has already finished and cannot be joined" }, status: 400
     end
+    if not(PlayerGame.find_by(player_game_params).nil?)
+      return render json: { error: "This user has already joined that game" }, status: 409
+    end
+    @player_game = PlayerGame.create(player_game_params)
   end
 
   private
