@@ -10,7 +10,6 @@ class GamesController < ApplicationController
 
   def create
     @game = Game.create(game_params)
-    @game.save
   end
 
   def update
@@ -21,6 +20,22 @@ class GamesController < ApplicationController
   def destroy
     @game = Game.find(params[:id])
     @game.destroy
+  end
+
+  def opened
+    @games = Game.where("start_date > now() - time_limit * interval '1 MINUTE'")
+    render :template => "games/index.json.jbuilder"
+  end
+
+  def join
+    player_game_params = {game_id: params[:id], player_id: params[:player_id]}
+    if Game.find_by_id(params[:id]).is_finished?
+      render json: { error: "This game has already finished and cannot be joined" }, status: 400
+    elsif PlayerGame.find_by(player_game_params).nil?
+      @player_game = PlayerGame.create(player_game_params)
+    else
+      render json: { error: "This user has already joined that game" }, status: 409
+    end
   end
 
   private
