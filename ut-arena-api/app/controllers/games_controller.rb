@@ -38,6 +38,25 @@ class GamesController < ApplicationController
     @player_game = PlayerGame.create(player_game_params)
   end
 
+  def finished
+    @player = Player.find_by_id(params[:player_id])
+    @games = @player.games.where("start_date < now() - time_limit * interval '1 MINUTE'")
+  end
+
+  def player_score
+    player = Player.find_by_id(params[:player_id])
+    @scores = player.player_games.find_by_game_id(params[:game_id])
+  end
+
+  def players
+    @players = Game.find_by_id(params[:id]).players
+  end
+
+  def add_score
+    @score = Player.find_by_id(params[:player_id]).player_games.find_by(game_id: params[:game_id])
+    @score.update({ score: params[:score], team: params[:team] })
+  end
+
   private
 
   def game_params
