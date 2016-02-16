@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>UT-Arena</title>
+</head>
+
+<body>
+
+  <div id="container">
+    <table class="table" id="games-table">
+      <thead>
+        <tr>
+          <th>Map Name</th>
+          <th>Time Limit</th>
+          <th>Start Date</th>
+          <th>Match Type</th>
+        </tr>
+      <thead>
+        <tbody></tbody>
+    </table>
+  </div>
+  <script data-main="scripts/app" src="bower_components/requirejs/require.js"></script>
+
+  <script type="text/template" id="game-template">
+  <td><%= map_name %></td>
+  <td><%= time_limit %></td>
+  <td><%= start_date %></td>
+  <td><%= match_type %></td>
+  </script>
+
+</body>
+
+</html>
