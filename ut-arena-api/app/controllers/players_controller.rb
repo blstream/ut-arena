@@ -10,7 +10,7 @@ class PlayersController < ApplicationController
       take = params[:take].to_i
       if (skip  && take) != 0
         @count = object.count
-        @games = object.where(id: skip..(skip + take))
+        @players = object.where(id: skip..(skip + take))
         return render :template => "players/paginated_players.json.jbuilder"
       end
     end
