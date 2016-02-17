@@ -1,5 +1,13 @@
 class GamesController < ApplicationController
   def index
+    skip = params[:skip].to_i
+    take = params[:take].to_i
+    puts params, skip, take
+    if (skip  && take) != 0
+      @count = Game.count
+      @games = Game.where(id: skip..(skip + take))
+      return render :template => "games/paginated_games.json.jbuilder"
+    end
     @games = Game.all
   end
 
