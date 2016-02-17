@@ -1,13 +1,6 @@
 class GamesController < ApplicationController
   def index
-    skip = params[:skip].to_i
-    take = params[:take].to_i
-    puts params, skip, take
-    if (skip  && take) != 0
-      @count = Game.count
-      @games = Game.where(id: skip..(skip + take))
-      return render :template => "games/paginated_games.json.jbuilder"
-    end
+    selected_games(Game)
     @games = Game.all
   end
 
@@ -67,6 +60,15 @@ class GamesController < ApplicationController
   end
 
   private
+  def selected_games(object)
+    skip = params[:skip].to_i
+    take = params[:take].to_i
+    if (skip  && take) != 0
+      @count = object.count
+      @games = object.where(id: skip..(skip + take))
+      return render :template => "games/paginated_games.json.jbuilder"
+    end
+  end
 
   def game_params
     params.require(:game).permit(:start_date, :time_limit, :map_name, :match_type)
