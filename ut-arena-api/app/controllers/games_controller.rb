@@ -50,6 +50,7 @@ class GamesController < ApplicationController
 
   def players
     @players = Game.find_by_id(params[:id]).players
+    render :template => "players/players.json.jbuilder"
   end
 
   def add_score

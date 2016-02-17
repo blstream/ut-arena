@@ -1,15 +1,15 @@
-define(['backbone', 'collections/games', 'views/game'], function(Backbone, GamesCollection, GameView) {
+define(['backbone', 'collections/players', 'views/player'], function(Backbone, PlayersCollection, PlayerView) {
 
   return Backbone.View.extend({
 
     tagName: 'table',
     className: 'table table-striped',
 
-    template: _.template($('#games-view').html()),
+    template: _.template($('#players-view').html()),
 
   initialize: function() {
 
-    this.collection = new GamesCollection();
+    this.collection = new PlayersCollection();
     this.listenTo(this.collection, 'reset', this.render);
     this.collection.fetch({reset: true});
 
@@ -27,9 +27,9 @@ define(['backbone', 'collections/games', 'views/game'], function(Backbone, Games
       return this;
   },
 
-  renderOne: function (game) {
+  renderOne: function (player) {
 
-      var view = new GameView({model: game});
+      var view = new PlayerView({model: player});
       this.$tbody.append(view.render().el);
   }
 

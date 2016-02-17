@@ -1,31 +1,77 @@
 <!doctype html>
 <html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UT-Arena</title>
+  <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+         <a href="#" class='navbar-brand'>Index</a>
+      </div>
 
-  <div id="container">
-    <table class="table" id="games-table">
-      <thead>
-        <tr>
-          <th>Map Name</th>
-          <th>Time Limit</th>
-          <th>Start Date</th>
-          <th>Match Type</th>
-        </tr>
-      <thead>
-        <tbody></tbody>
-    </table>
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#/games">Games</a></li>
+          <li><a href="#/players">Players</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#/login">Login</a></li>
+          <li><a href="#/signup">Signup</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
+  <div class="jumbotron">
+    <div id="container" class="container"></div>
   </div>
+
   <script data-main="scripts/app" src="bower_components/requirejs/require.js"></script>
+
+  <script type="text/template" id="games-view">
+    <thead>
+      <tr>
+        <th>Map Name</th>
+        <th>Time Limit</th>
+        <th>Start Date</th>
+        <th>Match Type</th>
+      </tr>
+    <thead>
+      <tbody></tbody>
+  </script>
 
   <script type="text/template" id="game-template">
   <td><%= map_name %></td>
   <td><%= time_limit %></td>
   <td><%= start_date %></td>
   <td><%= match_type %></td>
+  </script>
+
+  <script type="text/template" id="players-view">
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Nick</th>
+      </tr>
+    <thead>
+      <tbody></tbody>
+  </script>
+
+  <script type="text/template" id="player-template">
+  <td><%= id %></td>
+  <td><%= nick %></td>
   </script>
 
 </body>

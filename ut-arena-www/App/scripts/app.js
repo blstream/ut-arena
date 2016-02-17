@@ -7,7 +7,6 @@ require.config({
     }
 });
 
-require(['views/games'], function(GamesView){
-
-    new GamesView();
+require(['routes/router'], function(Router){
+    Router.initialize();
 });
