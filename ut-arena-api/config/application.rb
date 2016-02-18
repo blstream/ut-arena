@@ -28,7 +28,7 @@ module UtArenaApi
     config.autoload_paths += %W["#{config.root}/app/validators/"]
 
     config.action_dispatch.default_headers = {
-      'Access-Control-Allow-Origin' => 'http://localhost:8010'
+      'Access-Control-Allow-Origin' => '*'
     }
   end
 end
