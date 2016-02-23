@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>UT-Arena</title>
   <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="styles/styles.css" rel="stylesheet">
 </head>
 
 <body>
@@ -39,41 +40,7 @@
   </div>
 
   <script data-main="scripts/app" src="bower_components/requirejs/require.js"></script>
-
-  <script type="text/template" id="games-view">
-    <thead>
-      <tr>
-        <th>Map Name</th>
-        <th>Time Limit</th>
-        <th>Start Date</th>
-        <th>Match Type</th>
-      </tr>
-    <thead>
-      <tbody></tbody>
-  </script>
-
-  <script type="text/template" id="game-template">
-  <td><%= map_name %></td>
-  <td><%= time_limit %></td>
-  <td><%= start_date %></td>
-  <td><%= match_type %></td>
-  </script>
-
-  <script type="text/template" id="players-view">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>Nick</th>
-      </tr>
-    <thead>
-      <tbody></tbody>
-  </script>
-
-  <script type="text/template" id="player-template">
-  <td><%= id %></td>
-  <td><%= nick %></td>
-  </script>
-
+  
 </body>
 
 </html>

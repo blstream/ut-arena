@@ -1,11 +1,12 @@
-define(['backbone', 'collections/players', 'views/player'], function(Backbone, PlayersCollection, PlayerView) {
+define(['backbone', 'collections/players', 'views/player', 'text!../../partials/players.html'], 
+			 function(Backbone, PlayersCollection, PlayerView, PlayersPartial) {
 
   return Backbone.View.extend({
 
     tagName: 'table',
     className: 'table table-striped',
 
-    template: _.template($('#players-view').html()),
+    template: _.template(PlayersPartial),
 
   initialize: function() {
 

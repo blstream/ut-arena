@@ -5,7 +5,9 @@
     "backbone": "^1.2.3",
     "jquery": "^2.2.0",
     "requirejs": "^2.1.22",
-    "bootstrap": "^3.3.6"
+    "bootstrap": "^3.3.6",
+    "backbone.modelBinder": "backbone.modelbinder#^1.1.0",
+    "text": "requirejs-text#^2.0.14"
   },
   "devDependencies": {},
   "appPath": "",

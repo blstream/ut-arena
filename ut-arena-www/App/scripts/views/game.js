@@ -1,16 +1,25 @@
-define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
+define(['backbone', 'underscore', 'jquery', 'text!../../partials/game.html'], 
+			 function(Backbone, _, $, GamePartial) {
 return Backbone.View.extend({
 
-  tagName: 'tr',
+    tagName: 'tr',
 
-  template: _.template($('#game-template').html()),
+    template: _.template(GamePartial),
 
-  render: function () {
+    events: {
+      "click .btn-delete": 'deleteGame'
+    },
 
-    this.$el.html(this.template(this.model.toJSON()));
-    return this;
-  },
+    render: function () {
 
+      this.$el.html(this.template(this.model.toJSON()));
+      return this;
+    },
+
+    editGame: function () {
+      
+    }
+  
   });
 
 });

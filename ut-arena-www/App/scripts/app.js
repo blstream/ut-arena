@@ -4,6 +4,8 @@ require.config({
         jquery: '../bower_components/jquery/dist/jquery',
         underscore: '../bower_components/underscore/underscore',
         backbone: '../bower_components/backbone/backbone',
+        modelbinder: '../bower_components/backbone.modelBinder/Backbone.ModelBinder',
+				text: '../bower_components/text/text'
     }
 });
 

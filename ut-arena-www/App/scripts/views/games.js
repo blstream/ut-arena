@@ -1,11 +1,12 @@
-define(['backbone', 'collections/games', 'views/game'], function(Backbone, GamesCollection, GameView) {
+define(['backbone', 'collections/games', 'views/game', 'text!../../partials/games.html'], 
+			 function(Backbone, GamesCollection, GameView, GamesPartial) {
 
   return Backbone.View.extend({
 
     tagName: 'table',
     className: 'table table-striped',
 
-    template: _.template($('#games-view').html()),
+    template: _.template(GamesPartial),
 
   initialize: function() {
 

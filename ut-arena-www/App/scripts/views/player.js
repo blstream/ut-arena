@@ -1,9 +1,10 @@
-define(['backbone', 'underscore', 'jquery'], function(Backbone, _, $) {
+define(['backbone', 'underscore', 'jquery', 'text!../../partials/player.html'], 
+			 function(Backbone, _, $, PlayerPartial) {
 return Backbone.View.extend({
 
   tagName: 'tr',
 
-  template: _.template($('#player-template').html()),
+  template: _.template(PlayerPartial),
 
   render: function () {
 
