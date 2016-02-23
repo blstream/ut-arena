@@ -1,16 +1,18 @@
-# This example is for the Production stage
+# This example is for the Development stage
 
 # Here the stage name is set, it would later be executed with command like:
 # cap production deploy
 set :stage, :development
 
-# User that would be used is set to the production
+set :rails_env, :development
+
+# User that would be used is set to the development
 set :user, "development"
 
 # The server address is defined here
 server_address = "192.168.33.10"
 
-# Here are defined roles for the production server
+# Here are defined roles for the Development server
 role :app, "#{fetch :user}@#{server_address}"
 role :web, "#{fetch :user}@#{server_address}"
 role :db,  "#{fetch :user}@#{server_address}"
