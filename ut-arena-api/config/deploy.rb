@@ -26,7 +26,7 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
 # Path to gemfile
-# set :bundle_gemfile, "#{release_path}/ut-arena-api/Gemfile"
+set :bundle_gemfile, "#{release_path}/ut-arena-api/Gemfile"
 
 # url to the repo
 set :repo_url, "http://github.com/blstream/ut-arena.git"
@@ -84,7 +84,7 @@ namespace :deploy do
   task :bundle_install do
     on roles(:app) do
       within release_path do
-        execute :bundle, "--gemfile Gemfile --path #{release_path}/ut-arena-api/Gemfile --quiet --binstubs #{shared_path}bin --without [:test, :development]"
+
       end
     end
   end
