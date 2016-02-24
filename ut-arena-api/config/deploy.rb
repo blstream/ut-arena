@@ -34,7 +34,7 @@ set :repo_url, "http://github.com/blstream/ut-arena.git"
 
 # Defaults:
 set :scm,           :git
-set :branch,        :master
+set :branch,        :"ut-provisioning"
 set :format,        :pretty
 set :log_level,     :debug
 set :keep_releases, 5
@@ -56,8 +56,8 @@ namespace :deploy do
   desc "Make sure local git is in sync with remote."
   task :check_revision do
     on roles(:app) do
-      unless `git rev-parse HEAD` == `git rev-parse origin/master`
-        puts "WARNING: HEAD is not the same as origin/master"
+      unless `git rev-parse HEAD` == `git rev-parse origin/ut-provisioning`
+        puts "WARNING: HEAD is not the same as origin/ut-provisioning"
         puts "Run `git push` to sync changes."
         exit
       end
