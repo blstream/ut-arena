@@ -17,4 +17,3 @@ Gemfile.lock
 database.yml
 
 production.rb
-development.rb
