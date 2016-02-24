@@ -81,6 +81,15 @@ namespace :deploy do
     end
   end
 
+  task :bundle_install do
+    on roles(:app) do
+      within release_path do
+        execute :bundle, "--gemfile Gemfile --path #{release_path}/ut-arena-api/Gemfile --binstubs #{shared_path}bin --without [:test, :development]"
+      end
+    end
+  end
+  after 'deploy:updating', 'deploy:bundle_install'
+
   before :starting,     :check_revision
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
