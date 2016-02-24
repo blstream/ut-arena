@@ -1,3 +1,5 @@
+# require 'bundler/capistrano'
+
 # The application name is set here
 set :application, 'ut-arena'
 set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
@@ -24,8 +26,7 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
 # Path to gemfile
-set :bundle_gemfile,  "#{release_path}/ut-arena-api/Gemfile"
-set :bundle_path, "#{release_path}/ut-arena-api/"
+set :bundle_gemfile, "#{release_path}/ut-arena-api/Gemfile"
 
 # url to the repo
 set :repo_url, "http://github.com/blstream/ut-arena.git"
