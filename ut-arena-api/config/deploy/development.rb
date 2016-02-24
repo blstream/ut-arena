@@ -4,11 +4,6 @@
 # cap production deploy
 set :stage, :development
 
-set :rails_env, :development
-
-# User that would be used is set to the development
-set :user, "development"
-
 # The server address is defined here
 server_address = "192.168.33.10"
 

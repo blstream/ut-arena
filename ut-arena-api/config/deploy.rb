@@ -5,11 +5,12 @@ set :full_app_name, "#{fetch(:application)}_#{fetch(:stage)}"
 set :puma_threads,    [4, 16]
 set :puma_workers,    0
 
+# User that would be used is set to the development
+set :user, "development"
 
 # Don't change these unless you know what you're doing
 set :pty,             true
 set :use_sudo,        false
-set :stage,           :production
 set :deploy_via,      :remote_cache
 set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
 set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
@@ -22,9 +23,9 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
-# liked files
-set :linked_files, %w{config/database.yml config/secrets.yml}
-
+# Path to gemfile
+set :bundle_gemfile,  "#{release_path}/ut-arena-api/Gemfile"
+set :bundle_path, "#{release_path}/ut-arena-api/"
 
 # url to the repo
 set :repo_url, "http://github.com/blstream/ut-arena.git"

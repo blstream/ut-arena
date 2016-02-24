@@ -12,7 +12,6 @@
 !/log/.keep
 /tmp
 .DS_Store
-Gemfile.lock
 
 database.yml
 
