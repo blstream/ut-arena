@@ -82,4 +82,4 @@ production:
   <<: *default
   database: ut-arena-api_production
   username: ut-arena-api
-  password: <%= ENV['UT-ARENA-API_DATABASE_PASSWORD'] %>
+  password: ut-arena

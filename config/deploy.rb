@@ -38,6 +38,7 @@ set :format,        :pretty
 set :log_level,     :debug
 set :keep_releases, 5
 
+set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/secrets.yml')
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
