@@ -2,5 +2,4 @@
 
 Urban Terror Arena - API in Ruby on Rails
 
-* Ruby version
-Ruby 2.1.5
+Vagrant File and provisioning scripts are located in vagrant directory

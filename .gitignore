@@ -15,3 +15,5 @@
 
 database.yml
 secrets.yml
+
+/config/deploy/production.rb
