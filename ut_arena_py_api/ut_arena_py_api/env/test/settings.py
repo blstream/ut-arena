@@ -1,0 +1,1 @@
+from ut_arena_py_api.settings import *
