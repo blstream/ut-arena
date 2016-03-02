@@ -1,4 +1,1 @@
-settings_local.py
-settings_development.py
-settings_test.py
-settings_production.py
+ut_arena/envs/default

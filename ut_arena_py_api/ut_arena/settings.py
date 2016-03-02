@@ -22,11 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '!2stj*=!93mhvadu7moo(^ak6(jkl&(y*%q59l=7qj(5+n*-r)'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -51,7 +46,7 @@ MIDDLEWARE_CLASSES = [
   'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ut_arena_py_api.urls'
+ROOT_URLCONF = 'ut_arena.urls'
 
 TEMPLATES = [
   {
@@ -69,22 +64,7 @@ TEMPLATES = [
   },
 ]
 
-WSGI_APPLICATION = 'ut_arena_py_api.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {
-  'default': {
-  'ENGINE': 'django.db.backends.postgresql_psycopg2',
-  'NAME': 'ut-arena',
-  'USER': 'krzysztof',
-  'PASSWORD': 'test',
-  'HOST': 'localhost',
-  'PORT': '',
-  }
-}
+WSGI_APPLICATION = 'ut_arena.wsgi.application'
 
 
 # Password validation

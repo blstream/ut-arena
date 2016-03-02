@@ -1,4 +1,4 @@
-from ut_arena_py_api.settings import *
+from ut_arena.settings import *
 
 DATABASES = {
   'default': {
@@ -10,5 +10,3 @@ DATABASES = {
   'PORT': '',
   }
 }
-
-DEBUG = False

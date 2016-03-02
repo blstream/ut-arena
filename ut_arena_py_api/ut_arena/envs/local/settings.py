@@ -1,4 +1,10 @@
-from ut_arena_py_api.settings import *
+from ut_arena.settings import *
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = []
 
 DATABASES = {
   'default': {
