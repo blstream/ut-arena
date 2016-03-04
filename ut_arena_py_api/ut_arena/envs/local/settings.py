@@ -16,3 +16,5 @@ DATABASES = {
   'PORT': '',
   }
 }
+
+STATIC_ROOT = '/var/www/ut-arena/static'
