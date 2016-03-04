@@ -36,7 +36,6 @@ pygobject==3.16.2
 PyJWT==1.4.0
 pyOpenSSL==0.15.1
 pyserial==3.0.1
-python-apt==1.0.1+ubuntu0.1
 python-debian==0.1.27
 pyxdg==0.25
 service-identity==14.0.0
