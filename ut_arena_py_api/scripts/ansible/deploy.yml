@@ -1,0 +1,77 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  user: "{{ user }}"
+
+  tasks:
+    - name: Clone/pull project repo
+      git: repo={{ project_repo }} dest={{ install_root }} accept_hostkey=yes version=django-structure force=yes
+
+    - name: install python packages
+      become: yes
+      become_method: sudo
+      pip: requirements={{django_root}}/requirements.txt
+
+    - name: copy environment settings
+      shell: "cp -r {{django_root}}/ut_arena/envs/{{ stage }} {{ install_root }}/ut_arena_py_api/ut_arena/envs/default"
+
+    - name: delete local settings
+      file: path={{django_root}}/ut_arena/envs/local state=absent
+
+    - name: delete development settings
+      file: path={{django_root}}/ut_arena/envs/development state=absent
+
+    - name: delete production settings
+      file: path={{django_root}}/ut_arena/envs/production state=absent
+
+    - name: delete test settings
+      file: path={{django_root}}/ut_arena/envs/test state=absent
+
+    - name: copy supervisor configuration
+      become: yes
+      become_method: sudo
+      copy: src={{django_root}}/ut_arena/envs/default/supervisord_uwsgi.conf dest=/etc/supervisor/conf.d/ut-arena.conf remote_src=True
+
+    - name: copy nginx config
+      become: yes
+      become_method: sudo
+      copy: src={{django_root}}/ut_arena/envs/default/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf remote_src=True
+      notify: restart nginx
+
+    - name: django migrate
+      django_manage: command=migrate app_path={{ django_root }} pythonpath={{ pythonpath }}
+
+    - name: create static directory
+      file: path={{static_root}} state=directory owner={{ user }}
+
+    - name: django collectstatic
+      django_manage: command=collectstatic app_path={{django_root}} pythonpath={{ pythonpath }}
+
+    - name: create nginx log file
+      file: path=/var/log/ut-arena/nginx_api.access.log state=fileuwsgi_supervisor.log state=touch
+
+    - name: create uwsgi log file
+      file: path=/var/log/ut-arena/uwsgi_supervisor.log state=touch
+
+    - name: Give executable permission to uwsgi_start script
+      file: path={{django_root}}/scripts/uwsgi_start.sh mode=770
+
+    - name: restart supervisor
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl restart dev_utarena_uwsgi"
+
+    - name: restart nginx
+      become: yes
+      become_method: sudo
+      shell: "nginx -s reload"
+
+    - name: make sure nginx server is running
+      become: yes
+      become_method: sudo
+      service: name=nginx state=started enabled=yes
+
+  handlers:
+    - include: handlers.yml
