@@ -17,4 +17,4 @@ DATABASES = {
   }
 }
 
-STATIC_ROOT = '/var/www/ut-arena/static'
+STATIC_ROOT = '/opt/envs/local/ut-arena/ut_arena_py_api/static'
