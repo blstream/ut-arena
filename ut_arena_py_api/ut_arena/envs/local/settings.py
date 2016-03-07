@@ -17,4 +17,4 @@ DATABASES = {
   }
 }
 
-STATIC_ROOT = '/opt/envs/local/ut-arena/ut_arena_py_api/static'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
