@@ -17,6 +17,14 @@
       apt: pkg={{ item }}
       with_items: "{{ system_packages }}"
 
+    - name: disable nginx
+      become: yes
+      become_method: sudo
+      shell: "update-rc.d -f nginx disable"
+
+    - name: stop nginx
+      service: name=nginx state=stopped
+
     - name: Save ssh key to server
       copy: src={{ ssh_private_key }} dest=/home/{{ user }}/.ssh/id_rsa mode=600
 
@@ -29,7 +37,6 @@
       become: yes
       become_method: sudo
       file: path=/var/log/ut-arena state=directory owner={{ user }}
-      notify: start nginx
 
     - name: make sure postgresql server is running
       service: name=postgresql state=started

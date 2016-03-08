@@ -29,7 +29,7 @@
     - name: delete test settings
       file: path={{django_root}}/ut_arena/envs/test state=absent
 
-    - name: copy supervisor configuration
+    - name: copy supervisor configuration for django project
       become: yes
       become_method: sudo
       copy: src={{django_root}}/ut_arena/envs/default/supervisord_uwsgi.conf dest=/etc/supervisor/conf.d/ut-arena.conf remote_src=True
@@ -38,7 +38,11 @@
       become: yes
       become_method: sudo
       copy: src={{django_root}}/ut_arena/envs/default/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf remote_src=True
-      notify: restart nginx
+
+    - name: Copy nginx config for supervisor
+      become: yes
+      become_method: sudo
+      copy: src={{django_root}}/ut_arena/envs/default/nginx_supervisor.conf dest=/etc/supervisor/conf.d/nginx.conf remote_src=True
 
     - name: django migrate
       django_manage: command=migrate app_path={{ django_root }} pythonpath={{ pythonpath }}
@@ -50,7 +54,10 @@
       django_manage: command=collectstatic app_path={{django_root}} pythonpath={{ pythonpath }}
 
     - name: create nginx log file
-      file: path=/var/log/ut-arena/nginx_api.access.log state=fileuwsgi_supervisor.log state=touch
+      file: path=/var/log/ut-arena/nginx_api.access.log state=touch
+
+    - name: create nginx supervisor log file
+      file: path=/var/log/ut-arena/nginx_supervisor.log state=touch
 
     - name: create uwsgi log file
       file: path=/var/log/ut-arena/uwsgi_supervisor.log state=touch
@@ -58,20 +65,15 @@
     - name: Give executable permission to uwsgi_start script
       file: path={{django_root}}/scripts/uwsgi_start.sh mode=770
 
+    - name: restart nginx
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl restart dev_nginx"
+
     - name: restart supervisor
       become: yes
       become_method: sudo
       shell: "supervisorctl restart dev_utarena_uwsgi"
-
-    - name: restart nginx
-      become: yes
-      become_method: sudo
-      shell: "nginx -s reload"
-
-    - name: make sure nginx server is running
-      become: yes
-      become_method: sudo
-      service: name=nginx state=started enabled=yes
 
   handlers:
     - include: handlers.yml
