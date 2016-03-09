@@ -10,8 +10,8 @@ DATABASES = {
   'default': {
   'ENGINE': 'django.db.backends.postgresql_psycopg2',
   'NAME': 'ut-arena',
-  'USER': 'krzysztof',
-  'PASSWORD': 'test',
+  'USER': 'utarena',
+  'PASSWORD': 'utarena1234',
   'HOST': 'localhost',
   'PORT': '',
   }

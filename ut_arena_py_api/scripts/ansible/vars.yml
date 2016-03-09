@@ -6,7 +6,7 @@ project_name: ut-arena
 stage: local
 
 # user that would be used
-user: deployment
+user: utarena
 
 # the base path to install to. You should not need to change this.
 install_root: "/opt/{{ project_name }}"
@@ -22,7 +22,7 @@ pythonpath: "/usr/lib/python2.7"
 project_repo: git@github.com:blstream/ut-arena.git
 
 # a private key that has access to the repository URL
-ssh_private_key: ~/.ssh/id_rsa
+ssh_private_key: ~/.ssh/open8/id_rsa.key
 
 # The value of your django project's STATIC_ROOT settings.
 static_root: "{{django_root}}/static"
@@ -32,8 +32,8 @@ server_name: ut-arena.com
 
 # database setup
 db_name: ut-arena
-db_user: krzysztof
-db_password: test
+db_user: utarena
+db_password: ut1234
 
 # apt packages to be installed
 system_packages:
