@@ -9,11 +9,11 @@ ALLOWED_HOSTS = []
 DATABASES = {
   'default': {
   'ENGINE': 'django.db.backends.postgresql_psycopg2',
-  'NAME': 'ut-arena',
+  'NAME': 'utarena',
   'USER': 'utarena',
-  'PASSWORD': 'utarena1234',
+  'PASSWORD': 'ut1234',
   'HOST': 'localhost',
-  'PORT': '',
+  'PORT': '5432',
   }
 }
 

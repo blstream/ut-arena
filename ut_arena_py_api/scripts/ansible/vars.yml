@@ -34,7 +34,7 @@ static_root: "{{app_home}}/static"
 server_name: ut-arena.net
 
 # database setup
-db_name: ut-arena
+db_name: utarena
 db_user: utarena
 db_password: ut1234
 
