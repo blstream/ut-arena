@@ -26,12 +26,15 @@
       service: name=nginx state=stopped
 
     - name: Save ssh key to server
-      copy: src={{ ssh_private_key }} dest=/home/{{ user }}/.ssh/id_rsa mode=600
+      copy: src={{ ssh_private_key }} dest=/home/{{ user }}/.ssh/id_rsa mode=400
+
+    - name: Create temp directory for app
+      file: path={{ temp_dir }} state=directory owner={{ user }}
 
     - name: Create directory for app
       become: yes
       become_method: sudo
-      file: path={{ install_root }} state=directory owner={{ user }}
+      file: path={{ app_home }} state=directory owner={{ user }}
 
     - name: Create directory for logs
       become: yes
@@ -41,13 +44,13 @@
     - name: make sure postgresql server is running
       service: name=postgresql state=started
 
-    - name: create database
+    - name: Create a database
       become: yes
       become_method: sudo
       become_user: postgres
       postgresql_db: name={{ db_name }}
 
-    - name: create database user
+    - name: Create a database user
       become: yes
       become_method: sudo
       become_user: postgres

@@ -7,51 +7,57 @@
 
   tasks:
     - name: Clone/pull project repo
-      git: repo={{ project_repo }} dest={{ install_root }} accept_hostkey=yes version=django-structure force=yes
+      git: repo={{ project_repo }} dest={{ temp_dir }} accept_hostkey=yes version=django-structure force=yes
+
+    - name: copy project -> {{ temp_dir }}/ut_arena_py_api/ -> {{ app_home }}
+      shell: "cp -rf {{ temp_dir }}/ut_arena_py_api/* {{ app_home }}"
+
+    - name: copy environment settings
+      shell: "cp -rf {{ temp_dir }}/ut_arena_py_api/ut_arena/envs/{{ stage }} {{ app_home }}/ut_arena/envs/default"
+
+    - name: delete local settings
+      file: path={{app_home}}/ut_arena/envs/local state=absent
+
+    - name: delete development settings
+      file: path={{app_home}}/ut_arena/envs/development state=absent
+
+    - name: delete production settings
+      file: path={{app_home}}/ut_arena/envs/production state=absent
+
+    - name: delete test settings
+      file: path={{app_home}}/ut_arena/envs/test state=absent
+
+    - name: delete temp app dir
+      shell: "rm -rf {{ temp_dir }}"
 
     - name: install python packages
       become: yes
       become_method: sudo
-      pip: requirements={{django_root}}/requirements.txt
-
-    - name: copy environment settings
-      shell: "cp -r {{django_root}}/ut_arena/envs/{{ stage }} {{ install_root }}/ut_arena_py_api/ut_arena/envs/default"
-
-    - name: delete local settings
-      file: path={{django_root}}/ut_arena/envs/local state=absent
-
-    - name: delete development settings
-      file: path={{django_root}}/ut_arena/envs/development state=absent
-
-    - name: delete production settings
-      file: path={{django_root}}/ut_arena/envs/production state=absent
-
-    - name: delete test settings
-      file: path={{django_root}}/ut_arena/envs/test state=absent
+      pip: requirements={{app_home}}/requirements.txt
 
     - name: copy supervisor configuration for django project
       become: yes
       become_method: sudo
-      copy: src={{django_root}}/ut_arena/envs/default/supervisord_uwsgi.conf dest=/etc/supervisor/conf.d/ut-arena.conf remote_src=True
+      copy: src={{app_home}}/ut_arena/envs/default/supervisord_uwsgi.conf dest=/etc/supervisor/conf.d/ut-arena.conf remote_src=True
 
     - name: copy nginx config
       become: yes
       become_method: sudo
-      copy: src={{django_root}}/ut_arena/envs/default/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf remote_src=True
+      copy: src={{app_home}}/ut_arena/envs/default/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf remote_src=True
 
     - name: Copy nginx config for supervisor
       become: yes
       become_method: sudo
-      copy: src={{django_root}}/ut_arena/envs/default/nginx_supervisor.conf dest=/etc/supervisor/conf.d/nginx.conf remote_src=True
+      copy: src={{app_home}}/ut_arena/envs/default/nginx_supervisor.conf dest=/etc/supervisor/conf.d/nginx.conf remote_src=True
 
     - name: django migrate
-      django_manage: command=migrate app_path={{ django_root }} pythonpath={{ pythonpath }}
+      django_manage: command=migrate app_path={{ app_home }} pythonpath={{ pythonpath }}
 
     - name: create static directory
       file: path={{static_root}} state=directory owner={{ user }}
 
     - name: django collectstatic
-      django_manage: command=collectstatic app_path={{django_root}} pythonpath={{ pythonpath }}
+      django_manage: command=collectstatic app_path={{app_home}} pythonpath={{ pythonpath }}
 
     - name: create nginx log file
       file: path=/var/log/ut-arena/nginx_api.access.log state=touch
@@ -63,7 +69,7 @@
       file: path=/var/log/ut-arena/uwsgi_supervisor.log state=touch
 
     - name: Give executable permission to uwsgi_start script
-      file: path={{django_root}}/scripts/uwsgi_start.sh mode=770
+      file: path={{app_home}}/scripts/uwsgi_start.sh mode=770
 
     - name: restart nginx
       become: yes
