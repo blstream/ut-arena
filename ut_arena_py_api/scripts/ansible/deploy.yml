@@ -28,7 +28,7 @@
       file: path={{app_home}}/ut_arena/envs/test state=absent
 
     - name: delete temp app dir
-      shell: "rm -rf {{ temp_dir }}"
+      file: path={{ temp_dir }} state=absent
 
     - name: install python packages
       become: yes
@@ -58,6 +58,11 @@
 
     - name: django collectstatic
       django_manage: command=collectstatic app_path={{app_home}} pythonpath={{ pythonpath }}
+
+    - name: create log directory
+      become: yes
+      become_method: sudo
+      file: path=/var/log/ut-arena/ state=directory owner={{ user }}
 
     - name: create nginx log file
       file: path=/var/log/ut-arena/nginx_api.access.log state=touch
