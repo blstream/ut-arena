@@ -1,0 +1,103 @@
+---
+- hosts: servers
+  vars_files:
+    - vars.yml
+  gather_facts: false
+  user: "{{ user }}"
+
+  tasks:
+    - name: Clone/pull project repo
+      git: repo={{ project_repo }} dest={{ temp_dir }} accept_hostkey=yes version=django-structure force=yes
+
+    - name: copy project -> {{ temp_dir }}/ut_arena_py_api/ -> {{ app_home }}
+      shell: "cp -rf {{ temp_dir }}/ut_arena_py_api/* {{ app_home }}"
+
+    - name: copy environment settings
+      shell: "cp -rf {{ temp_dir }}/ut_arena_py_api/ut_arena/envs/{{ stage }} {{ app_home }}/ut_arena/envs/default"
+
+    - name: delete local settings
+      file: path={{app_home}}/ut_arena/envs/local state=absent
+
+    - name: delete development settings
+      file: path={{app_home}}/ut_arena/envs/development state=absent
+
+    - name: delete production settings
+      file: path={{app_home}}/ut_arena/envs/production state=absent
+
+    - name: delete test settings
+      file: path={{app_home}}/ut_arena/envs/test state=absent
+
+    - name: delete temp app dir
+      file: path={{ temp_dir }} state=absent
+
+    - name: install python packages
+      become: yes
+      become_method: sudo
+      pip: requirements={{app_home}}/requirements.txt
+
+    - name: copy supervisor configuration for django project
+      become: yes
+      become_method: sudo
+      copy: src={{app_home}}/ut_arena/envs/default/supervisord_uwsgi.conf dest=/etc/supervisor/conf.d/ut-arena.conf remote_src=True
+
+    - name: copy nginx config
+      become: yes
+      become_method: sudo
+      copy: src={{app_home}}/ut_arena/envs/default/nginx.conf dest=/etc/nginx/sites-enabled/{{ project_name }}.conf remote_src=True
+
+    - name: Copy nginx config for supervisor
+      become: yes
+      become_method: sudo
+      copy: src={{app_home}}/ut_arena/envs/default/nginx_supervisor.conf dest=/etc/supervisor/conf.d/nginx.conf remote_src=True
+
+    - name: django migrate
+      django_manage: command=migrate app_path={{ app_home }} pythonpath={{ pythonpath }}
+
+    - name: create static directory
+      file: path={{static_root}} state=directory owner={{ user }}
+
+    - name: django collectstatic
+      django_manage: command=collectstatic app_path={{app_home}} pythonpath={{ pythonpath }}
+
+    - name: create nginx log file
+      file: path=/var/log/ut-arena/nginx_api.access.log state=touch
+
+    - name: create nginx supervisor log file
+      file: path=/var/log/ut-arena/nginx_supervisor.log state=touch
+
+    - name: create uwsgi log file
+      file: path=/var/log/ut-arena/uwsgi_supervisor.log state=touch
+
+    - name: delete default nginx site
+      become: yes
+      become_method: sudo
+      file: path=/etc/nginx/sites-enabled/default state=absent
+
+    - name: Give executable permission to uwsgi_start script
+      file: path={{app_home}}/scripts/uwsgi_start.sh mode=770
+
+    - name: Give executable permission to nginx_start script
+      file: path={{app_home}}/scripts/nginx_start.sh mode=770
+
+    - name: Supervisor Reread
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl reread"
+
+    - name: Supervisor update
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl update"
+
+    - name: restart nginx
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl restart dev_nginx"
+
+    - name: restart supervisor
+      become: yes
+      become_method: sudo
+      shell: "supervisorctl restart dev_utarena_uwsgi"
+
+  handlers:
+    - include: handlers.yml

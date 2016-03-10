@@ -1,0 +1,52 @@
+---
+# a unix path-friendly name (IE, no spaces or special characters)
+project_name: ut-arena
+
+# name of the stage
+stage: local
+
+# user that would be used
+user: utarena
+
+# the base path to install to. You should not need to change this.
+#install_root: "/opt/{{ project_name }}"
+#django_root: "{{install_root}}/ut_arena_py_api"
+
+temp_dir: "/home/{{ user }}/temp"
+app_home: "/opt/{{ project_name }}"
+
+# the python module path to your project's wsgi file.
+wsgi_module: ut_arena.wsgi
+
+# any directories that need to be added to the PYTHONPATH.
+pythonpath: "/usr/lib/python2.7"
+
+# the git repository URL for the project
+project_repo: git@github.com:blstream/ut-arena.git
+
+# The value of your django project's STATIC_ROOT settings.
+static_root: "{{app_home}}/static"
+
+# the dns name or names (space separated) for your server
+server_name: ut-arena.net
+
+# database setup
+db_name: utarena
+db_user: utarena
+db_password: ut1234
+
+# apt packages to be installed
+system_packages:
+  - git
+  - nginx
+  - postgresql
+  - postgresql-server-dev-all
+  - python-pip
+  - python-dev
+  - python-psycopg2
+  - libffi-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - libcups2-dev
+  - uwsgi
+  - supervisor
