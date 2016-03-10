@@ -79,15 +79,15 @@
     - name: Give executable permission to nginx_start script
       file: path={{app_home}}/scripts/nginx_start.sh mode=770
 
-    - name: Stop Supervisor
+    - name: Supervisor Reread
       become: yes
       become_method: sudo
-      shell: "service supervisord stop"
+      shell: "supervisorctl reread"
 
-    - name: Start Supervisor
+    - name: Supervisor update
       become: yes
       become_method: sudo
-      shell: "service supervisord start"
+      shell: "supervisorctl update"
 
     - name: restart nginx
       become: yes
