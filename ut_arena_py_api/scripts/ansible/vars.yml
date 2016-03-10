@@ -24,9 +24,6 @@ pythonpath: "/usr/lib/python2.7"
 # the git repository URL for the project
 project_repo: git@github.com:blstream/ut-arena.git
 
-# a private key that has access to the repository URL
-ssh_private_key: ~/.ssh/id_rsa
-
 # The value of your django project's STATIC_ROOT settings.
 static_root: "{{app_home}}/static"
 

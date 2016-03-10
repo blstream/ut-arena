@@ -25,9 +25,6 @@
     - name: stop nginx
       service: name=nginx state=stopped
 
-    - name: Save ssh key to server
-      copy: src={{ ssh_private_key }} dest=/home/{{ user }}/.ssh/id_rsa mode=400
-
     - name: Create temp directory for app
       file: path={{ temp_dir }} state=directory owner={{ user }}
 
