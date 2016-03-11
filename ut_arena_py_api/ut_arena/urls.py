@@ -18,5 +18,5 @@ from django.contrib import admin
 
 urlpatterns = [
   url(r'^admin/', admin.site.urls),
-  url(r'^', include('apps.api_test.urls')),
+  url(r'^api/', include('apps.utarena.urls')),
 ]
