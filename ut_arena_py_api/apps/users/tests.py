@@ -9,7 +9,7 @@ class UserTests(APITestCase):
         """
         Ensure that we can create new User object.
         """
-        url = reverse('user-list')
+        url = reverse('signup')
         data = {'username': 'test', 'password':'test1234'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
