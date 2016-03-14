@@ -2,7 +2,6 @@ from copy import copy
 from rest_framework import status
 from rest_framework.response import Response
 from apps.utarena.models import Game
-from django.contrib.auth.models import User
 from rest_framework import viewsets
 from serializers import GameSerializer
 
