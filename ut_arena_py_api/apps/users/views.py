@@ -28,6 +28,7 @@ class SignUpView(APIView):
         serialized = UserSerializer(data=request.data)
         if serialized.is_valid():
             serialized.save()
+            Player.objects.create(user_id=serialized.data['id'])
             return Response(serialized.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
