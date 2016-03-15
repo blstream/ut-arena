@@ -7,7 +7,7 @@
 
   tasks:
     - name: Clone/pull project repo
-      git: repo={{ project_repo }} dest={{ temp_dir }} accept_hostkey=yes version=django-structure force=yes
+      git: repo={{ project_repo }} dest={{ temp_dir }} accept_hostkey=yes version=master force=yes
 
     - name: copy project -> {{ temp_dir }}/ut_arena_py_api/ -> {{ app_home }}
       shell: "cp -rf {{ temp_dir }}/ut_arena_py_api/* {{ app_home }}"
