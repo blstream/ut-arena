@@ -6,7 +6,8 @@ from rest_framework.test import APITestCase
 
 
 class UserTests(APITestCase):
-    data = {'username': 'test', 'password':'test1234'}
+    data = {'username': 'test', 'password': 'test1234'}
+
     def test_create_user(self):
         """
         Ensure that we can create new User object.
@@ -33,6 +34,6 @@ class UserTests(APITestCase):
         Ensure we can't login to the account with invalid credentials.
         """
         url = reverse('login')
-        data = {'username': 'test', 'password':'1234'}
+        data = {'username': 'test', 'password': '1234'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

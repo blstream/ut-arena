@@ -12,10 +12,18 @@ class Player(models.Model):
 
 
 class Game(models.Model):
+    MATCH_TYPE_FREE_FOR_ALL = 1
+    MATCH_TYPE_CAPTURE_THE_FLAG = 2
+    MATCH_TYPES = (
+        (MATCH_TYPE_FREE_FOR_ALL, 'Free for all'),
+        (MATCH_TYPE_CAPTURE_THE_FLAG, 'Capture the Flag')
+    )
+
+
     start_date = models.DateTimeField()
     time_limit = models.IntegerField()
     map_name = models.CharField(max_length=64)
-    match_type = models.CharField(max_length=32)
+    match_type = models.IntegerField(choices=MATCH_TYPES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(User, null=False)
+    created_by = models.ForeignKey(User, null=False, related_name='created_games')
