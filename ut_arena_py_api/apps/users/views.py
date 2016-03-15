@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from serializers import UserSerializer
+from apps.utarena.models import Player
 
 
 class UserViewSet(viewsets.ModelViewSet):
