@@ -24,7 +24,6 @@ class GamesViewTest(APITestCase):
         url = reverse('game-list')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
         response = self.client.post(url, self.data, format='json')
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_game_without_authentication(self):

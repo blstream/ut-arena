@@ -9,6 +9,7 @@ from django.db import models
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    games = models.ManyToManyField('Game', through='PlayerGame', related_name='joined_games')
 
 
 class Game(models.Model):
@@ -19,7 +20,6 @@ class Game(models.Model):
         (MATCH_TYPE_CAPTURE_THE_FLAG, 'Capture the Flag')
     )
 
-
     start_date = models.DateTimeField()
     time_limit = models.IntegerField()
     map_name = models.CharField(max_length=64)
@@ -27,3 +27,20 @@ class Game(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, null=False, related_name='created_games')
+
+
+class PlayerGame(models.Model):
+    TEAM_RED = 1
+    TEAM_BLUE = 2
+    TEAMS = (
+        (TEAM_RED, 'Red'),
+        (TEAM_BLUE, 'Blue')
+    )
+
+    score = models.IntegerField(null=True)
+    team = models.IntegerField(choices=TEAMS, null=True)
+    player = models.ForeignKey(Player)
+    game = models.ForeignKey(Game)
+
+    class Meta:
+        unique_together = (('player', 'game'),)
