@@ -1,0 +1,12 @@
+{
+  "name": "utarena",
+  "version": "1.0.0",
+  "description": "ut arena www",
+  "main": "app.js",
+  "author": "lukasz.galka",
+  "license": "ISC",
+  "dependencies": {
+    "grunt": "^0.4.5",
+    "grunt-connect": "^0.2.0"
+  }
+}
