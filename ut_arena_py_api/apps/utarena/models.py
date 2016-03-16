@@ -37,7 +37,10 @@ class PlayerGame(models.Model):
         (TEAM_BLUE, 'Blue')
     )
 
-    score = models.IntegerField()
-    team = models.IntegerField(choices=TEAMS)
+    score = models.IntegerField(null=True)
+    team = models.IntegerField(choices=TEAMS, null=True)
     player = models.ForeignKey(Player)
     game = models.ForeignKey(Game)
+
+    class Meta:
+        unique_together = (('player', 'game'),)
