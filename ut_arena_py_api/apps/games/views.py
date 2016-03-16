@@ -1,12 +1,12 @@
 from copy import copy
 from rest_framework import status
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from apps.utarena.models import Game
 from rest_framework import viewsets
-from rest_framework.views import APIView
 
 from serializers import GameSerializer
-from apps.player_game.serializers import PlayerGameSerializer
+from apps.utarena.serializers import PlayerGameSerializer
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -25,10 +25,9 @@ class GameViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-
-class GameJoinView(APIView):
-    def post(self, request, *args, **kwargs):
-        data = {'player': request.user.pk, 'game': kwargs['pk']}
+    @detail_route(methods=['post'])
+    def join(self, request, pk=None):
+        data = {'player': request.user.pk, 'game': pk}
         serialized = PlayerGameSerializer(data=data)
         if serialized.is_valid():
             serialized.save()

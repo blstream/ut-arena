@@ -7,6 +7,5 @@ router = routers.DefaultRouter()
 router.register(r'games', views.GameViewSet)
 
 urlpatterns = [
-    url(r'^games/(?P<pk>[^/.]+)/join/$', views.GameJoinView.as_view(), name='join_game'),
     url(r'^', include(router.urls)),
 ]
