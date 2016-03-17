@@ -11,3 +11,8 @@ class GameSerializer(serializers.ModelSerializer):
 class PlayerGameSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerGame
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerGame

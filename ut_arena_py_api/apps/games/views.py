@@ -4,8 +4,8 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework import viewsets
 
-from apps.games.models import Game
-from serializers import GameSerializer, PlayerGameSerializer
+from apps.games.models import Game, Player, PlayerGame
+from serializers import GameSerializer, PlayerGameSerializer, PlayerSerializer
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -17,7 +17,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = copy(request.data)
-        data['created_by'] = request.user.pk
+        data['created_by'] = request.user.player.pk
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -28,6 +28,22 @@ class GameViewSet(viewsets.ModelViewSet):
     def join(self, request, pk=None):
         data = {'player': request.user.player.pk, 'game': pk}
         serialized = PlayerGameSerializer(data=data)
+        if serialized.is_valid():
+            serialized.save()
+            return Response(serialized.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+    @detail_route(methods=['post'])
+    def score(self, request, pk=None):
+        player_game = PlayerGame.objects.get(player=pk, game=request.data['game_id'])
+        data = {'score': request.data['score'], 'team': request.data['team']}
+        serialized = PlayerGameSerializer(instance=player_game, data=data, partial=True)
         if serialized.is_valid():
             serialized.save()
             return Response(serialized.data, status=status.HTTP_201_CREATED)

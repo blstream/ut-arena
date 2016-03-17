@@ -8,7 +8,6 @@ from django.db import models
 
 class Player(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    games = models.ManyToManyField('Game', through='PlayerGame', related_name='joined_games')
 
 
 class Game(models.Model):
@@ -38,8 +37,8 @@ class PlayerGame(models.Model):
 
     score = models.IntegerField(null=True)
     team = models.IntegerField(choices=TEAMS, null=True)
-    player = models.ForeignKey(Player)
-    game = models.ForeignKey(Game)
+    player = models.ForeignKey(Player, related_name='games')
+    game = models.ForeignKey(Game, related_name='players')
 
     class Meta:
         unique_together = (('player', 'game'),)
