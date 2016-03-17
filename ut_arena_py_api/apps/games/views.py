@@ -2,16 +2,15 @@ from copy import copy
 from rest_framework import status
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from apps.utarena.models import Game
 from rest_framework import viewsets
 
-from serializers import GameSerializer
-from apps.utarena.serializers import PlayerGameSerializer
+from apps.games.models import Game
+from serializers import GameSerializer, PlayerGameSerializer
 
 
 class GameViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows games to be viewed or edited.
+    API endpoint that allows games to be viewed or edited,
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
@@ -27,7 +26,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def join(self, request, pk=None):
-        data = {'player': request.user.pk, 'game': pk}
+        data = {'player': request.user.player.pk, 'game': pk}
         serialized = PlayerGameSerializer(data=data)
         if serialized.is_valid():
             serialized.save()

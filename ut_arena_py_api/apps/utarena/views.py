@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
+from apps.games.models import Player
 from serializers import UserSerializer
-from models import Player
 
 
 class UserViewSet(viewsets.ModelViewSet):
