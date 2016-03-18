@@ -27,7 +27,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def join(self, request, pk=None):
-        data = {'player': request.user.player.pk, 'game': pk}
+        data = {'player_id': request.user.player.pk, 'game_id': pk}
         serialized = PlayerGameSerializer(data=data)
         if serialized.is_valid():
             serialized.save()
