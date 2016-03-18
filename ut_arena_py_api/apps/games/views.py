@@ -1,11 +1,12 @@
 from copy import copy
 from rest_framework import status
 from rest_framework.decorators import detail_route
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework import viewsets
 
-from apps.games.models import Game, Player, PlayerGame
-from serializers import GameSerializer, PlayerGameSerializer, PlayerSerializer
+from apps.games.models import Game, Player
+from serializers import GameSerializer, PlayerSerializer, PlayerGameSerializer
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -17,7 +18,7 @@ class GameViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = copy(request.data)
-        data['created_by'] = request.user.player.pk
+        data['created_by'] = request.user.pk
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -41,11 +42,12 @@ class PlayerViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def score(self, request, pk=None):
-        player_game = PlayerGame.objects.get(player=pk, game=request.data['game_id'])
-        data = {'score': request.data['score'], 'team': request.data['team']}
-        serialized = PlayerGameSerializer(instance=player_game, data=data, partial=True)
+        data = copy(request.data)
+        data['player_id'] = pk
+        player_game = get_object_or_404(self.request.user.player.games, game_id=data['game_id'])
+        serialized = PlayerGameSerializer(player_game, data=data)
         if serialized.is_valid():
             serialized.save()
-            return Response(serialized.data, status=status.HTTP_201_CREATED)
+            return Response(serialized.data, status=status.HTTP_200_OK)
         else:
             return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
