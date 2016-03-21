@@ -39,11 +39,9 @@ class PlayerViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['post'])
     def score(self, request, pk=None):
         data = copy(request.data)
-        data['player_id'] = pk
         game = get_object_or_404(Game, pk=data['game_id'])
         player_game = get_object_or_404(game.players, player_id=pk)
-        serialized = PlayerGameSerializer(player_game, data=data)
-
+        serialized = PlayerGameSerializer(player_game, data=data, partial=True)
         if serialized.is_valid():
             game.add_user_score(instance=player_game, **serialized.validated_data)
             return Response(status=status.HTTP_200_OK)

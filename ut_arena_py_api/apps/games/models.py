@@ -5,7 +5,6 @@ from django.db import models
 
 # Create your models here.
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import get_object_or_404
 
 
 class Player(models.Model):

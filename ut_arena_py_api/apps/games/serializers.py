@@ -28,7 +28,7 @@ class PlayerGameSerializer(serializers.Serializer):
         return PlayerGame.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.score = validated_data['score']
-        instance.team = validated_data.get('team', instance.team)
-        instance.save()
+        # instance.score = validated_data['score']
+        # instance.team = validated_data.get('team', instance.team)
+        # instance.save()
         return instance
