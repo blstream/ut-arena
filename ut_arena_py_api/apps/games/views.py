@@ -11,7 +11,7 @@ from serializers import GameSerializer, PlayerSerializer, PlayerGameSerializer
 
 class GameViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows games to be viewed or edited,
+    API endpoint that allows games to be viewed or edited.
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
@@ -27,13 +27,9 @@ class GameViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def join(self, request, pk=None):
-        data = {'player_id': request.user.player.pk, 'game_id': pk}
-        serialized = PlayerGameSerializer(data=data)
-        if serialized.is_valid():
-            serialized.save()
-            return Response(serialized.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+        game = get_object_or_404(Game, pk=pk)
+        game.join(player=self.request.user.player)
+        return Response(status=status.HTTP_200_OK)
 
 
 class PlayerViewSet(viewsets.ModelViewSet):
@@ -44,10 +40,12 @@ class PlayerViewSet(viewsets.ModelViewSet):
     def score(self, request, pk=None):
         data = copy(request.data)
         data['player_id'] = pk
-        player_game = get_object_or_404(self.request.user.player.games, game_id=data['game_id'])
+        game = get_object_or_404(Game, pk=data['game_id'])
+        player_game = get_object_or_404(game.players, player_id=pk)
         serialized = PlayerGameSerializer(player_game, data=data)
+
         if serialized.is_valid():
-            serialized.save()
-            return Response(serialized.data, status=status.HTTP_200_OK)
+            game.add_user_score(instance=player_game, **serialized.validated_data)
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)

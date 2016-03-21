@@ -20,17 +20,15 @@ class PlayerGameSerializer(serializers.Serializer):
     team = serializers.IntegerField(default=None)
 
     def validate(self, attrs):
-        if 'score' in attrs and attrs['score'] is None and self.instance is not None:
+        if self.instance and 'score' in attrs and attrs['score'] is None :
             raise serializers.ValidationError("Score value cannot be Null")
-        if self.instance is None and PlayerGame.objects.filter(player_id=attrs['player_id'], game_id=attrs['game_id']).exists():
-            raise serializers.ValidationError("Player has already joined the game")
         return attrs
 
     def create(self, validated_data):
         return PlayerGame.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.score = validated_data.get('score', instance.score)
+        instance.score = validated_data['score']
         instance.team = validated_data.get('team', instance.team)
         instance.save()
         return instance

@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import get_object_or_404
 
 
 class Player(models.Model):
@@ -26,11 +28,23 @@ class Game(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(User, null=False, related_name='created_games')
 
+    def join(self, player):
+        if self.players.filter(player=player).exists():
+            raise ValidationError("Player has already joined the game")
+        self.players.add(PlayerGame(game=self, player=player), bulk=False)
+
+    def add_user_score(self, instance, **validated_data):
+        instance.score = validated_data['score']
+        instance.team = validated_data.get('team', instance.team)
+        instance.save()
+
 
 class PlayerGame(models.Model):
+    NO_TEAM = None
     TEAM_RED = 1
     TEAM_BLUE = 2
     TEAMS = (
+        (NO_TEAM, 'No Team'),
         (TEAM_RED, 'Red'),
         (TEAM_BLUE, 'Blue')
     )
@@ -41,4 +55,4 @@ class PlayerGame(models.Model):
     game = models.ForeignKey(Game, related_name='players')
 
     class Meta:
-        unique_together = (('player', 'game'),)
+        unique_together = ('player', 'game')
