@@ -31,13 +31,8 @@ class GameViewSet(viewsets.ModelViewSet):
         game.join(player=self.request.user.player)
         return Response(status=status.HTTP_200_OK)
 
-
-class PlayerViewSet(viewsets.ModelViewSet):
-    queryset = Player.objects.all()
-    serializer_class = PlayerSerializer
-
     @detail_route(methods=['post'])
-    def score(self, request, pk=None):
+    def player_score(self, request, pk=None):
         data = copy(request.data)
         game = get_object_or_404(Game, pk=data['game_id'])
         player_game = get_object_or_404(game.players, player_id=pk)
@@ -47,3 +42,7 @@ class PlayerViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer

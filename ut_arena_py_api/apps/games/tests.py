@@ -2,34 +2,59 @@ from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.games.models import Game, PlayerGame
+
+
 class GamesViewTest(APITestCase):
-    data = {'map_name':'Prague v2', 'match_type':1, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
-    def create_user_and_login(self):
+    game_data = {'map_name': 'Prague v2', 'match_type':1, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
+    score_data = {'score': 45, 'team':1}
+    def setUp(self):
         """
         Create user and login
-        :return user token
         """
         data = {'username': 'test', 'password':'test1234'}
         create_user_url = reverse('signup')
         create_user = self.client.post(create_user_url, data, format='json')
-        url = reverse('login')
-        login_user = self.client.post(url, data, format='json')
-        return login_user.data['token']
+        login_url = reverse('login')
+        login_user = self.client.post(login_url, data, format='json')
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + login_user.data['token'])
 
-    def test_create_game_with_authentication(self):
+    def test_create_game(self):
         """
         Ensure we can create game with token authentication
         """
-        token = self.create_user_and_login()
         url = reverse('game-list')
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token)
-        response = self.client.post(url, self.data, format='json')
+        response = self.client.post(url, self.game_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Game.objects.get().map_name, self.game_data['map_name'])
 
     def test_create_game_without_authentication(self):
         """
         Ensure we can't create game without token authentication
         """
+        self.client.credentials(HTTP_AUTHORIZATION='')
         url = reverse('game-list')
-        response = self.client.post(url, self.data, format='json')
+        response = self.client.post(url, self.game_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertFalse(Game.objects.filter(id=1).exists())
+
+    def test_join_game(self):
+        """
+        Ensure we can join game (with id = 1) as a valid logged user
+        """
+        self.test_create_game()
+        url = reverse('game-join', args=(1,))
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1).exists())
+
+    def test_player_score(self):
+        """
+        Ensure we can add score to existing game as a valid logged user
+        """
+        self.test_join_game()
+        url = reverse('game-player-score', args=(1,))
+        response = self.client.post(url, self.score_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(PlayerGame.objects.get().score, self.score_data['score'])
+        self.assertEqual(PlayerGame.objects.get().team, self.score_data['team'])
