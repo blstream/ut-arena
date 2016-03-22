@@ -32,10 +32,11 @@ class Game(models.Model):
             raise ValidationError("Player has already joined the game")
         self.players.add(PlayerGame(game=self, player=player), bulk=False)
 
-    def add_user_score(self, instance, **validated_data):
-        instance.score = validated_data['score']
-        instance.team = validated_data.get('team', instance.team)
-        instance.save()
+    def add_player_score(self, player, score, team=None):
+        player_game = self.players.get(player=player)
+        player_game.score = score
+        player_game.team = team
+        player_game.save()
 
 
 class PlayerGame(models.Model):

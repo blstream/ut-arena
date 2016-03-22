@@ -2,11 +2,11 @@ from django.core.urlresolvers import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.games.models import Game, PlayerGame
+from apps.games.models import Game, PlayerGame, Player
 
 
 class GamesViewTest(APITestCase):
-    game_data = {'map_name': 'Prague v2', 'match_type':1, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
+    game_data = {'map_name': 'Prague v2', 'match_type':2, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
     score_data = {'score': 45, 'team':1}
     def setUp(self):
         """
@@ -48,6 +48,23 @@ class GamesViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1).exists())
 
+    def test_join(self):
+        """
+        Test for join method as valid player, for exisitng game
+        """
+        self.test_create_game()
+        player = Player.objects.get(id=1)
+        game = Game.objects.get(id=1)
+        game.join(player=player)
+        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1).exists())
+
+    def test_add_player_score(self):
+        self.test_join()
+        game = Game.objects.get(id=1)
+        player = Player.objects.get(id=1)
+        game.add_player_score(player=player, score=30, team=1)
+        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1, score=30, team=1).exists())
+
     def test_player_score(self):
         """
         Ensure we can add score to existing game as a valid logged user
@@ -56,5 +73,7 @@ class GamesViewTest(APITestCase):
         url = reverse('game-player-score', args=(1,))
         response = self.client.post(url, self.score_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(PlayerGame.objects.get().score, self.score_data['score'])
-        self.assertEqual(PlayerGame.objects.get().team, self.score_data['team'])
+        player_game = PlayerGame.objects.get(player_id=1, game_id=1)
+        self.assertIsNotNone(player_game)
+        self.assertEqual(player_game.score, self.score_data['score'])
+        self.assertEqual(player_game.team, self.score_data['team'])
