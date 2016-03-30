@@ -17,6 +17,7 @@ class GamesViewTest(APITestCase):
         """
         create_user_url = reverse('signup')
         create_user = self.client.post(create_user_url, user_data, format='json')
+        self.user = User.objects.get(id=create_user.data['id'], username=create_user.data['username'])
         login_url = reverse('login')
         login_user = self.client.post(login_url, user_data, format='json')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + login_user.data['token'])
@@ -74,7 +75,7 @@ class GamesViewTest(APITestCase):
         url = reverse('game-player-score', args=(1,))
         response = self.client.post(url, score_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        player_game = PlayerGame.objects.get(player_id=1, game_id=1)
+        player_game = PlayerGame.objects.get(player=self.user.player, game_id=1)
         self.assertIsNotNone(player_game)
         self.assertEqual(player_game.score, score_data['score'])
         self.assertEqual(player_game.team, score_data['team'])
