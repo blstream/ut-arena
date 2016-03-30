@@ -82,6 +82,9 @@ class GamesViewTest(APITestCase):
 
 
 class GameTest(TestCase):
+    def setUp(self):
+        self.create_user_player_and_game()
+
     def create_user(self):
         return User.objects.create(**user_data)
 
@@ -94,25 +97,22 @@ class GameTest(TestCase):
         return game
 
     def create_user_player_and_game(self):
-        user = self.create_user()
-        player = self.create_player(user)
-        game = self.create_game(user)
-        return {"player": player, "game": game, "user": user}
+        self.user = self.create_user()
+        self.player = self.create_player(self.user)
+        self.game = self.create_game(self.user)
 
     def test_join(self):
         """
         Test for join method as valid player, for exisitng game
         """
-        data = self.create_user_player_and_game()
-        player = data['player']
-        game = data['game']
+        player = self.player
+        game = self.game
         game.join(player=player)
         self.assertTrue(PlayerGame.objects.filter(player=player, game=game).exists())
-        return data
 
     def test_add_player_score(self):
-        data = self.test_join()
-        game = data['game']
-        player = data['player']
+        self.test_join()
+        game = self.game
+        player = self.player
         game.add_player_score(player=player, **score_data)
         self.assertTrue(PlayerGame.objects.filter(player=player, game=game, **score_data).exists())
