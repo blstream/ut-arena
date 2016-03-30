@@ -1,22 +1,24 @@
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APITestCase
-
 from apps.games.models import Game, PlayerGame, Player
+
+game_data = {'map_name': 'Prague v2', 'match_type': 2, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
+score_data = {'score': 45, 'team': 1}
+user_data = {'username': 'test', 'password': 'test1234'}
 
 
 class GamesViewTest(APITestCase):
-    game_data = {'map_name': 'Prague v2', 'match_type':2, 'time_limit': 10, 'start_date': '2016-04-10 10:00'}
-    score_data = {'score': 45, 'team':1}
     def setUp(self):
         """
         Create user and login
         """
-        data = {'username': 'test', 'password':'test1234'}
         create_user_url = reverse('signup')
-        create_user = self.client.post(create_user_url, data, format='json')
+        create_user = self.client.post(create_user_url, user_data, format='json')
         login_url = reverse('login')
-        login_user = self.client.post(login_url, data, format='json')
+        login_user = self.client.post(login_url, user_data, format='json')
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + login_user.data['token'])
 
     def test_create_game(self):
@@ -24,9 +26,20 @@ class GamesViewTest(APITestCase):
         Ensure we can create game with token authentication
         """
         url = reverse('game-list')
-        response = self.client.post(url, self.game_data, format='json')
+        response = self.client.post(url, game_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Game.objects.get().map_name, self.game_data['map_name'])
+        game = Game.objects.get(
+            id=response.data['id'],
+            map_name=response.data['map_name'],
+            match_type=response.data['match_type'],
+            time_limit=response.data['time_limit'],
+            start_date=response.data['start_date']
+        )
+        self.assertEqual(game.map_name, game_data['map_name'])
+        self.assertEqual(game.match_type, game_data['match_type'])
+        self.assertEqual(game.time_limit, game_data['time_limit'])
+        self.assertEqual(game.start_date.strftime("%Y-%m-%d %H:%M"), game_data['start_date'])
+        return game
 
     def test_create_game_without_authentication(self):
         """
@@ -34,36 +47,24 @@ class GamesViewTest(APITestCase):
         """
         self.client.credentials(HTTP_AUTHORIZATION='')
         url = reverse('game-list')
-        response = self.client.post(url, self.game_data, format='json')
+        response = self.client.post(url, game_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        self.assertFalse(Game.objects.filter(id=1).exists())
+        self.assertFalse(Game.objects.filter(
+            map_name=game_data['map_name'],
+            match_type=game_data['match_type'],
+            time_limit=game_data['time_limit'],
+            start_date=game_data['start_date']
+        ).exists())
 
     def test_join_game(self):
         """
-        Ensure we can join game (with id = 1) as a valid logged user
+        Ensure we can join game a valid logged user
         """
-        self.test_create_game()
+        game = self.test_create_game()
         url = reverse('game-join', args=(1,))
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1).exists())
-
-    def test_join(self):
-        """
-        Test for join method as valid player, for exisitng game
-        """
-        self.test_create_game()
-        player = Player.objects.get(id=1)
-        game = Game.objects.get(id=1)
-        game.join(player=player)
-        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1).exists())
-
-    def test_add_player_score(self):
-        self.test_join()
-        game = Game.objects.get(id=1)
-        player = Player.objects.get(id=1)
-        game.add_player_score(player=player, score=30, team=1)
-        self.assertTrue(PlayerGame.objects.filter(player_id=1, game_id=1, score=30, team=1).exists())
+        self.assertTrue(PlayerGame.objects.filter(player_id=1, game=game).exists())
 
     def test_player_score(self):
         """
@@ -71,9 +72,46 @@ class GamesViewTest(APITestCase):
         """
         self.test_join_game()
         url = reverse('game-player-score', args=(1,))
-        response = self.client.post(url, self.score_data, format='json')
+        response = self.client.post(url, score_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         player_game = PlayerGame.objects.get(player_id=1, game_id=1)
         self.assertIsNotNone(player_game)
-        self.assertEqual(player_game.score, self.score_data['score'])
-        self.assertEqual(player_game.team, self.score_data['team'])
+        self.assertEqual(player_game.score, score_data['score'])
+        self.assertEqual(player_game.team, score_data['team'])
+
+
+class GameTest(TestCase):
+    def create_user(self):
+        return User.objects.create(**user_data)
+
+    def create_player(self, user):
+        player = Player.objects.create(user=user)
+        return player
+
+    def create_game(self, user):
+        game = Game.objects.create(created_by=user, **game_data)
+        return game
+
+    def create_user_player_and_game(self):
+        user = self.create_user()
+        player = self.create_player(user)
+        game = self.create_game(user)
+        return {"player": player, "game": game, "user": user}
+
+    def test_join(self):
+        """
+        Test for join method as valid player, for exisitng game
+        """
+        data = self.create_user_player_and_game()
+        player = data['player']
+        game = data['game']
+        game.join(player=player)
+        self.assertTrue(PlayerGame.objects.filter(player=player, game=game).exists())
+        return data
+
+    def test_add_player_score(self):
+        data = self.test_join()
+        game = data['game']
+        player = data['player']
+        game.add_player_score(player=player, **score_data)
+        self.assertTrue(PlayerGame.objects.filter(player=player, game=game, **score_data).exists())

@@ -33,6 +33,8 @@ class Game(models.Model):
         self.players.add(PlayerGame(game=self, player=player), bulk=False)
 
     def add_player_score(self, player, score, team=None):
+        if not self.players.filter(player=player).exists():
+            raise ValidationError("Player has not joined the game")
         player_game = self.players.get(player=player)
         player_game.score = score
         player_game.team = team
