@@ -62,10 +62,11 @@ class GamesViewTest(APITestCase):
         Ensure we can join game a valid logged user
         """
         game = self.test_create_game()
-        url = reverse('game-join', args=(1,))
+        player = User.objects.get(username=user_data['username']).player
+        url = reverse('game-join', args=(player.id,))
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(PlayerGame.objects.filter(player_id=1, game=game).exists())
+        self.assertTrue(game.players.filter(player=player).exists())
 
     def test_player_score(self):
         """
@@ -111,6 +112,9 @@ class GameTest(TestCase):
         self.assertTrue(PlayerGame.objects.filter(player=player, game=game).exists())
 
     def test_add_player_score(self):
+        """
+        Test for add player score method as valid player, for exisitng game
+        """
         self.test_join()
         game = self.game
         player = self.player
