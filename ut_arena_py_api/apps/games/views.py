@@ -1,12 +1,12 @@
 from copy import copy
 from rest_framework import status
 from rest_framework.decorators import detail_route
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
-from apps.utarena.models import Game
 from rest_framework import viewsets
 
-from serializers import GameSerializer
-from apps.utarena.serializers import PlayerGameSerializer
+from apps.games.models import Game, Player
+from serializers import GameSerializer, PlayerSerializer, PlayerGameSerializer
 
 
 class GameViewSet(viewsets.ModelViewSet):
@@ -27,10 +27,26 @@ class GameViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['post'])
     def join(self, request, pk=None):
-        data = {'player': request.user.pk, 'game': pk}
+        game = get_object_or_404(Game, pk=pk)
+        game.join(player=self.request.user.player)
+        return Response(status=status.HTTP_200_OK)
+
+    @detail_route(methods=['post'])
+    def player_score(self, request, pk=None):
+        data = copy(request.data)
+        game = get_object_or_404(Game, id=pk)
         serialized = PlayerGameSerializer(data=data)
         if serialized.is_valid():
-            serialized.save()
-            return Response(serialized.data, status=status.HTTP_201_CREATED)
+            game.add_player_score(
+                player=self.request.user.player,
+                score=serialized.validated_data['score'],
+                team=serialized.validated_data['team']
+            )
+            return Response(status=status.HTTP_200_OK)
         else:
             return Response(serialized._errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PlayerViewSet(viewsets.ModelViewSet):
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
